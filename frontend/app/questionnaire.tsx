@@ -44,7 +44,7 @@ export default function Questionnaire() {
       <View style={styles.root} testID="questionnaire-result">
         <BackHeader title="Merci !" onBack={exit} topInset={insets.top} />
         <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.lg, paddingBottom: insets.bottom + space.xl }}>
-          <Txt variant="body">Vos réponses sont enregistrées sur votre téléphone. Elles serviront à votre bilan tous les 3 mois.</Txt>
+          <Txt variant="body">Vos réponses sont enregistrées sur votre téléphone. Elles serviront à votre bilan : à 3 mois, puis tous les 6 mois.</Txt>
           <View style={styles.scoreCard}>
             <Txt variant="label" style={{ color: colors.muted }}>Mon ressenti</Txt>
             <Txt style={styles.score} testID="result-wellbeing">{result.wellbeing} %</Txt>
@@ -76,7 +76,7 @@ export default function Questionnaire() {
               </View>
             </View>
           ) : null}
-          <Button testID="result-bilan-button" title="Voir mon bilan des 3 mois" icon="document-text" onPress={() => router.replace("/bilan")} />
+          <Button testID="result-bilan-button" title="Voir mon bilan" icon="document-text" onPress={() => router.replace("/bilan")} />
           <Button testID="result-call-button" title={`Appeler le ${CONTACT_PHONE}`} icon="call" variant="secondary" onPress={() => Linking.openURL(CONTACT_TEL)} />
         </ScrollView>
       </View>
@@ -92,7 +92,7 @@ export default function Questionnaire() {
           <Txt variant="h2">Comment vous sentez-vous avec votre traitement ?</Txt>
           <Txt variant="body">
             {QUESTIONS.length} questions, environ 2 minutes. Une réponse en un seul appui. Vos réponses restent sur votre téléphone et
-            préparent votre bilan tous les 3 mois avec Médical o2.
+            préparent votre bilan avec Médical o2 : à 3 mois, puis tous les 6 mois.
           </Txt>
           <Button testID="questionnaire-start-button" title="Commencer" icon="play" onPress={() => setStep(0)} />
         </ScrollView>

@@ -1,8 +1,8 @@
 import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
-import type { TaskStatus } from "@/src/store";
+import type { TaskStatus, Settings } from "@/src/store";
 
-export const REMINDER_HOUR = 9;
+export const formatTime = (min: number) => `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, "0")}`;
 export const notificationsSupported = Platform.OS !== "web";
 const CHANNEL_ID = "rappels-entretien";
 const DAYS_AHEAD = 14;
@@ -44,14 +44,16 @@ export async function requestPermission(): Promise<PermissionState> {
 }
 
 // Re-plans one 9 h notification per upcoming day, listing the tasks due that day.
-export async function syncReminders(tasks: TaskStatus[], enabled: boolean, surveyDueIn: number) {
+export async function syncReminders(tasks: TaskStatus[], enabled: boolean, surveyDueIn: number, settings: Settings) {
   if (!notificationsSupported) return;
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (!enabled || (await getPermissionState()) !== "granted") return;
 
   const now = new Date();
-  for (let d = 0; d < DAYS_AHEAD; d++) {
-    const when = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, REMINDER_HOUR, 0, 0);
+  const h = Math.floor(settings.time / 60);
+  const m = settings.time % 60;
+  for (let d = 0; settings.entretien && d < DAYS_AHEAD; d++) {
+    const when = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, h, m, 0);
     if (when <= now) continue;
     const due = tasks.filter((t) => t.dueIn <= d);
     if (!due.length) continue;
@@ -71,10 +73,10 @@ export async function syncReminders(tasks: TaskStatus[], enabled: boolean, surve
     });
   }
 
-  // Weekly questionnaire: remind at 10 h on the due day, then each week after.
-  for (let k = 0; k < 3; k++) {
+  // Weekly questionnaire: remind 1 minute after the chosen time on the due day, then each week after.
+  for (let k = 0; settings.questionnaire && k < 3; k++) {
     const d = Math.max(0, surveyDueIn) + k * 7;
-    const when = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, REMINDER_HOUR + 1, 0, 0);
+    const when = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, h, m + 1, 0);
     if (when <= now) continue;
     await Notifications.scheduleNotificationAsync({
       content: {

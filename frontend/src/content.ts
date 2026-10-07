@@ -85,7 +85,7 @@ export const GUIDES: Guide[] = [
     intro:
       "L'humidificateur chauffe et humidifie l'air pour éviter la sécheresse du nez et de la gorge.",
     steps: [
-      { title: "Remplir la cuve", text: "Remplissez avec de l'eau déminéralisée ou distillée, jusqu'au trait maximum. Jamais d'eau chaude." },
+      { title: "Remplir la cuve", text: "Remplissez jusqu'au trait maximum, avec l'eau de votre choix : eau déminéralisée, eau en bouteille ou eau du robinet. Toutes conviennent. Jamais d'eau chaude." },
       { title: "Remettre la cuve", text: "Replacez la cuve en vous assurant qu'elle est bien enclenchée, appareil éteint." },
       { title: "Régler le confort", text: "Si votre appareil le permet, ajustez le niveau d'humidification indiqué par votre technicien." },
       { title: "Le matin", text: "Videz l'eau restante, rincez et laissez sécher la cuve à l'air libre." },
@@ -172,7 +172,7 @@ export const FAQ: { q: string; a: string }[] = [
   { q: "Combien d'heures dois-je utiliser ma PPC ?", a: "Toutes les nuits, et au moins 4 heures par nuit. L'idéal est de la garder pendant tout votre sommeil, sieste comprise." },
   { q: "Je n'arrive pas à m'endormir avec le masque, est-ce normal ?", a: "Oui, au début c'est fréquent. Portez le masque quelques minutes en journée en regardant la télévision pour vous habituer. Cela s'améliore en quelques semaines." },
   { q: "Puis-je partir en voyage avec mon appareil ?", a: "Oui. Emportez-le en bagage cabine dans sa housse, avec votre ordonnance. Prévenez Médical o2 avant un long séjour." },
-  { q: "Quelle eau mettre dans l'humidificateur ?", a: "De l'eau déminéralisée ou distillée, à température ambiante. Videz la cuve chaque matin." },
+  { q: "Quelle eau mettre dans l'humidificateur ?", a: "Vous avez le choix : eau déminéralisée, eau en bouteille ou eau du robinet, toutes sont compatibles. Utilisez-la à température ambiante et videz la cuve chaque matin. Avec l'eau du robinet, détartrez la cuve plus souvent." },
   { q: "Que faire si je suis enrhumé ?", a: "Continuez si possible. Le nez bouché peut gêner : lavez le nez au sérum physiologique, et contactez votre médecin si vous ne supportez pas l'appareil." },
   { q: "Mon masque fuit, que faire ?", a: "Repositionnez-le sans trop serrer et vérifiez l'usure de la bulle. Si les fuites continuent, la taille ou le modèle n'est peut-être plus adapté : contactez votre technicien." },
   { q: "Quand changer mon masque et mes consommables ?", a: "Selon l'usure et votre prescription. Une bulle durcie, jaunie ou qui fuit doit être changée. Votre technicien Médical o2 vous les renouvelle lors des visites." },

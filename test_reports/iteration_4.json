@@ -1,0 +1,30 @@
+{
+  "summary": "Frontend-only testing for iteration 4 completed on mobile viewport 390x844. All requested features verified: humidificateur guide shows the 3 water choices (déminéralisée / bouteille / robinet) and FAQ has 'Quelle eau mettre dans l'humidificateur ?' with the same choices in the accordion answer. Suivi tab renders ReminderCard with web info text (no crash). /bilan: bilan-start-card, bilan-start-date, bilan-edit-start-button open the start-date-sheet with day/month/year steppers, values capped to today, start-date-save-button persists after reload. Schedule logic correct: start ~10 months ago → chips bilan-period-0 '3 premiers mois', bilan-period-1 'Mois 3 à 9', bilan-period-2 'Mois 9 à 15 (en cours)', next = start+15 months with 'bilan des 6 mois'; start = today → only bilan-period-0 '(en cours)' and next = start+3 months with 'bilan des 3 premiers mois'. Period chip filters bilan-period-range text correctly. Questionnaire result and intro both mention 'à 3 mois, puis tous les 6 mois'. Survey-card bilan button titled 'Mon bilan'. Regression: home, add night (save works, suivi-average updates), entretien screen all OK. No red-screen or runtime errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/bilan", "issues": ["Minor French grammar: 'Du 7 octobre 2026 au aujourd'hui.' reads oddly ('au' + 'aujourd'hui'). Consider \"jusqu'à aujourd'hui\" or \"à ce jour\". bilan.tsx:123"]}
+    ],
+    "react_native_issues": [
+      {"component": "shadow* style props", "issue": "RN Web console warning: '\"shadow*\" style props are deprecated. Use \"boxShadow\".' Likely in src/ui.tsx or theme styles; non-blocking but should migrate shadowColor/shadowOffset/shadowOpacity/shadowRadius to boxShadow for RN 0.76+ web."}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional: Fix minor copy in /bilan range text 'au aujourd'hui' → \"jusqu'à aujourd'hui\" (bilan.tsx line 123).",
+    "Optional: Replace deprecated shadow* props with boxShadow in shared UI components to silence RN Web warning."
+  ],
+  "critical_code_review_comments": [
+    "bilan.tsx periods loop guard (i < 40) and clamp of picked index are good; defaultIdx roll-back when <30 days into a new period is a nice UX touch.",
+    "start-date clamp uses addMonths(date,-12)/+12 for year nav which can cross month-length boundaries differently than expected on 31-day months; low impact but note.",
+    "ReminderCard correctly short-circuits on web via notificationsSupported."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100%"},
+  "seed_data_creation": "None — only used localStorage interactions through UI (set start date, save a night).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "App is Expo web preview at EXPO_PACKAGER_PROXY_URL. Use mobile viewport 390x844. Data persists in localStorage; to reset start date, open /bilan → Modifier. ReminderCard native settings (reminder-time-*, reminder-switch-*) only render on native (notificationsSupported false on web). Current date during test: 7 Oct 2026."
+}

@@ -12,6 +12,10 @@ const LOGS_KEY = "mo2_logs";
 const DONE_KEY = "mo2_task_done";
 const NOTIF_KEY = "mo2_notif_enabled";
 const SURVEYS_KEY = "mo2_surveys";
+const SETTINGS_KEY = "mo2_settings";
+
+export type Settings = { time: number; entretien: boolean; questionnaire: boolean; treatmentStart: string | null };
+const DEFAULT_SETTINGS: Settings = { time: 9 * 60, entretien: true, questionnaire: true, treatmentStart: null };
 
 export function dateKey(d: Date = new Date()) {
   const y = d.getFullYear();
@@ -43,6 +47,8 @@ type Ctx = {
   surveys: Survey[];
   saveSurvey: (s: Omit<Survey, "id" | "date">) => Promise<Survey>;
   surveyDueIn: number;
+  settings: Settings;
+  updateSettings: (p: Partial<Settings>) => void;
 };
 
 const DataContext = createContext<Ctx | null>(null);
@@ -53,6 +59,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [done, setDone] = useState<Record<string, string>>({});
   const [notifEnabled, setNotif] = useState(false);
   const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+
+  const updateSettings = useCallback((p: Partial<Settings>) => {
+    setSettings((prev) => {
+      const next = { ...prev, ...p };
+      storage.setItem(SETTINGS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
   const setNotifEnabled = useCallback(async (v: boolean) => {
     setNotif(v);
@@ -64,11 +79,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const rawLogs = await storage.getItem(LOGS_KEY, "[]");
       const rawDone = await storage.getItem(DONE_KEY, "{}");
       const rawSurveys = await storage.getItem(SURVEYS_KEY, "[]");
+      const rawSettings = await storage.getItem(SETTINGS_KEY, "{}");
       setNotif(Boolean(await storage.getItem(NOTIF_KEY, false)));
       try {
         setLogs(JSON.parse(String(rawLogs)));
         setDone(JSON.parse(String(rawDone)));
         setSurveys(JSON.parse(String(rawSurveys)));
+        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(String(rawSettings)) });
       } catch {
         // corrupted local data: start fresh
       }
@@ -124,11 +141,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   }, [done]);
 
   useEffect(() => {
-    if (ready) syncReminders(tasks, notifEnabled, surveyDueIn).catch(() => {});
-  }, [ready, tasks, notifEnabled, surveyDueIn]);
+    if (ready) syncReminders(tasks, notifEnabled, surveyDueIn, settings).catch(() => {});
+  }, [ready, tasks, notifEnabled, surveyDueIn, settings]);
 
   return (
-    <DataContext.Provider value={{ ready, logs, saveLog, deleteLog, tasks, markDone, notifEnabled, setNotifEnabled, surveys, saveSurvey, surveyDueIn }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ ready, logs, saveLog, deleteLog, tasks, markDone, notifEnabled, setNotifEnabled, surveys, saveSurvey, surveyDueIn, settings, updateSettings }}>{children}</DataContext.Provider>
   );
 }
 

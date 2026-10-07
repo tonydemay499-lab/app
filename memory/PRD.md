@@ -27,6 +27,10 @@ Guides + entretien + rappels + FAQ + suivi quotidien + assistant IA (Claude Sonn
 - Questionnaire hebdomadaire de ressenti (6 questions + Epworth), données locales, rappel notification à 10 h
 - Bilan des 3 mois (/bilan) : utilisation, évolution du ressenti, Epworth, gênes, partage texte
 
+- Eau de l'humidificateur : déminéralisée, bouteille ou robinet (au choix)
+- Rappels personnalisables : heure (6 h–22 h, pas de 30 min) et type (entretien / questionnaire)
+- Bilan : 1er à 3 mois après la date de début du traitement (modifiable), puis tous les 6 mois, avec choix de période
+
 ## Backlog
 - P1 : demande de consommables (bulle, filtres) envoyée à Médical o2
 - P2 : export PDF du suivi pour le médecin, vidéos tutoriels

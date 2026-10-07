@@ -11,6 +11,7 @@ import { makeStyles, useTheme } from "@/src/theme";
 import { usesNativeTabs } from "@/src/navigation";
 import { Txt, Card, Button, IconBadge, Ionicons, space, radius, fonts } from "@/src/ui";
 import { SurveyCard } from "@/src/components/survey-card";
+import { ReminderCard } from "@/src/components/reminder-card";
 import { useData, FEELINGS, Feeling, formatHours, dateKey, parseKey } from "@/src/store";
 
 export default function Suivi() {
@@ -46,6 +47,7 @@ export default function Suivi() {
       ) : (
         <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.md, paddingBottom: bottomChrome + 110 }}>
           <SurveyCard testID="suivi-survey-card" />
+          <ReminderCard />
           {logs.length === 0 ? (
             <Card testID="suivi-empty" style={{ alignItems: "center", paddingVertical: space.xxl }}>
               <IconBadge name="calendar" size={80} />

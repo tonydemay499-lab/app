@@ -16,7 +16,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#2D6A4F"
       },
-      "package": "com.emergent.ppcpatientguide.m5lok0",
+      "package": "com.medicalo.ppcpatientguide",
       "permissions": [
         "android.permission.POST_NOTIFICATIONS"
       ]

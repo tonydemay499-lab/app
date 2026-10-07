@@ -39,7 +39,7 @@ export function SurveyCard({ testID = "survey-card" }: { testID?: string }) {
       {due ? (
         <Button testID={`${testID}-start-button`} title="Répondre au questionnaire" icon="clipboard" onPress={() => router.push("/questionnaire")} />
       ) : null}
-      <Button testID={`${testID}-bilan-button`} title="Mon bilan des 3 mois" icon="document-text" variant="ghost" style={{ marginTop: due ? space.sm : 0 }} onPress={() => router.push("/bilan")} />
+      <Button testID={`${testID}-bilan-button`} title="Mon bilan" icon="document-text" variant="ghost" style={{ marginTop: due ? space.sm : 0 }} onPress={() => router.push("/bilan")} />
     </Card>
   );
 }

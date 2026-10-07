@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Linking, AppState } from "react-native";
+import { View, Linking, AppState, Switch, Pressable } from "react-native";
 import { useTheme } from "@/src/theme";
-import { Card, Txt, Button, IconBadge, space } from "@/src/ui";
+import { Card, Txt, Button, IconBadge, Ionicons, space, radius, fonts } from "@/src/ui";
 import { useData } from "@/src/store";
-import { getPermissionState, requestPermission, notificationsSupported, PermissionState, REMINDER_HOUR } from "@/src/notifications";
+import { getPermissionState, requestPermission, notificationsSupported, PermissionState, formatTime } from "@/src/notifications";
 
 export function ReminderCard() {
   const { colors } = useTheme();
-  const { notifEnabled, setNotifEnabled } = useData();
+  const { notifEnabled, setNotifEnabled, settings, updateSettings } = useData();
   const [perm, setPerm] = useState<PermissionState>("undetermined");
   const [busy, setBusy] = useState(false);
 
@@ -43,11 +43,9 @@ export function ReminderCard() {
       <View style={{ flexDirection: "row", alignItems: "center", gap: space.md }}>
         <IconBadge name={active ? "notifications" : "notifications-outline"} size={48} />
         <View style={{ flex: 1 }}>
-          <Txt variant="h3">Rappel chaque matin</Txt>
+          <Txt variant="h3">Mes rappels</Txt>
           <Txt variant="caption" testID="reminder-status">
-            {active
-              ? `Activé : entretien à ${REMINDER_HOUR} h, questionnaire de la semaine à ${REMINDER_HOUR + 1} h`
-              : `Recevez une notification à ${REMINDER_HOUR} h pour l'entretien et chaque semaine pour le questionnaire`}
+            {active ? `Activés, à ${formatTime(settings.time)}` : "Une notification pour l'entretien et le questionnaire, à l'heure de votre choix"}
           </Txt>
         </View>
       </View>
@@ -60,7 +58,38 @@ export function ReminderCard() {
           <Button testID="reminder-open-settings-button" title="Ouvrir les réglages" icon="settings" variant="ghost" style={{ marginTop: space.md }} onPress={() => Linking.openSettings()} />
         </>
       ) : active ? (
-        <Button testID="reminder-disable-button" title="Désactiver les rappels" variant="ghost" style={{ marginTop: space.md }} onPress={() => setNotifEnabled(false)} />
+        <>
+          <Txt variant="label" style={{ marginTop: space.lg, marginBottom: space.sm }}>Heure des rappels</Txt>
+          <View style={rowStyle(colors.surfaceTertiary)}>
+            <Pressable testID="reminder-time-minus" accessibilityLabel="Plus tôt" onPress={() => updateSettings({ time: Math.max(6 * 60, settings.time - 30) })} style={stepStyle(colors.brandTertiary)}>
+              <Ionicons name="remove" size={28} color={colors.onBrandTertiary} />
+            </Pressable>
+            <Txt testID="reminder-time-value" style={{ fontFamily: fonts.extrabold, fontSize: 28, color: colors.onSurface }}>{formatTime(settings.time)}</Txt>
+            <Pressable testID="reminder-time-plus" accessibilityLabel="Plus tard" onPress={() => updateSettings({ time: Math.min(22 * 60, settings.time + 30) })} style={stepStyle(colors.brandTertiary)}>
+              <Ionicons name="add" size={28} color={colors.onBrandTertiary} />
+            </Pressable>
+          </View>
+          <Txt variant="label" style={{ marginTop: space.lg, marginBottom: space.xs }}>Je veux être prévenu pour</Txt>
+          {([
+            ["entretien", "L'entretien du matériel", "Les jours où une tâche est à faire"],
+            ["questionnaire", "Le questionnaire de la semaine", "Une fois par semaine"],
+          ] as const).map(([key, label, sub]) => (
+            <View key={key} style={{ flexDirection: "row", alignItems: "center", gap: space.md, minHeight: 64 }}>
+              <View style={{ flex: 1 }}>
+                <Txt variant="body">{label}</Txt>
+                <Txt variant="caption">{sub}</Txt>
+              </View>
+              <Switch
+                testID={`reminder-switch-${key}`}
+                value={settings[key]}
+                onValueChange={(v) => updateSettings({ [key]: v })}
+                trackColor={{ true: colors.brandPrimary, false: colors.borderStrong }}
+                thumbColor={colors.surfaceSecondary}
+              />
+            </View>
+          ))}
+          <Button testID="reminder-disable-button" title="Désactiver les rappels" variant="ghost" style={{ marginTop: space.md }} onPress={() => setNotifEnabled(false)} />
+        </>
       ) : (
         <>
           {perm === "denied" ? (
@@ -74,3 +103,13 @@ export function ReminderCard() {
     </Card>
   );
 }
+
+const rowStyle = (bg: string) => ({
+  flexDirection: "row" as const,
+  alignItems: "center" as const,
+  justifyContent: "space-between" as const,
+  backgroundColor: bg,
+  borderRadius: radius.lg,
+  padding: space.sm,
+});
+const stepStyle = (bg: string) => ({ width: 56, height: 56, borderRadius: 28, backgroundColor: bg, alignItems: "center" as const, justifyContent: "center" as const });
