@@ -44,7 +44,7 @@ export async function requestPermission(): Promise<PermissionState> {
 }
 
 // Re-plans one 9 h notification per upcoming day, listing the tasks due that day.
-export async function syncReminders(tasks: TaskStatus[], enabled: boolean) {
+export async function syncReminders(tasks: TaskStatus[], enabled: boolean, surveyDueIn: number) {
   if (!notificationsSupported) return;
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (!enabled || (await getPermissionState()) !== "granted") return;
@@ -62,6 +62,25 @@ export async function syncReminders(tasks: TaskStatus[], enabled: boolean) {
         title: "Entretien de votre matériel",
         body: `Aujourd'hui : ${names.join(", ")}${more}`,
         data: { url: "/entretien" },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: when,
+        ...(Platform.OS === "android" ? { channelId: CHANNEL_ID } : {}),
+      },
+    });
+  }
+
+  // Weekly questionnaire: remind at 10 h on the due day, then each week after.
+  for (let k = 0; k < 3; k++) {
+    const d = Math.max(0, surveyDueIn) + k * 7;
+    const when = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, REMINDER_HOUR + 1, 0, 0);
+    if (when <= now) continue;
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Votre questionnaire de la semaine",
+        body: "2 minutes pour dire comment vous vous sentez avec votre traitement.",
+        data: { url: "/questionnaire" },
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DATE,

@@ -2,13 +2,16 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { storage } from "@/src/utils/storage";
 import { TASKS, MaintenanceTask } from "@/src/content";
 import { syncReminders } from "@/src/notifications";
+import { SURVEY_INTERVAL_DAYS } from "@/src/questionnaire";
 
 export type Feeling = "bien" | "moyen" | "fatigue";
 export type NightLog = { id: string; date: string; hours: number; feeling: Feeling };
+export type Survey = { id: string; date: string; wellbeing: number; epworth: number; issue: string | null; answers: Record<string, number> };
 
 const LOGS_KEY = "mo2_logs";
 const DONE_KEY = "mo2_task_done";
 const NOTIF_KEY = "mo2_notif_enabled";
+const SURVEYS_KEY = "mo2_surveys";
 
 export function dateKey(d: Date = new Date()) {
   const y = d.getFullYear();
@@ -22,7 +25,7 @@ export function parseKey(k: string) {
   return new Date(y, m - 1, d);
 }
 
-function daysBetween(a: string, b: string) {
+export function daysBetween(a: string, b: string) {
   return Math.round((parseKey(b).getTime() - parseKey(a).getTime()) / 86400000);
 }
 
@@ -37,6 +40,9 @@ type Ctx = {
   markDone: (taskId: string) => Promise<void>;
   notifEnabled: boolean;
   setNotifEnabled: (v: boolean) => Promise<void>;
+  surveys: Survey[];
+  saveSurvey: (s: Omit<Survey, "id" | "date">) => Promise<Survey>;
+  surveyDueIn: number;
 };
 
 const DataContext = createContext<Ctx | null>(null);
@@ -46,6 +52,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [logs, setLogs] = useState<NightLog[]>([]);
   const [done, setDone] = useState<Record<string, string>>({});
   const [notifEnabled, setNotif] = useState(false);
+  const [surveys, setSurveys] = useState<Survey[]>([]);
 
   const setNotifEnabled = useCallback(async (v: boolean) => {
     setNotif(v);
@@ -56,10 +63,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     (async () => {
       const rawLogs = await storage.getItem(LOGS_KEY, "[]");
       const rawDone = await storage.getItem(DONE_KEY, "{}");
+      const rawSurveys = await storage.getItem(SURVEYS_KEY, "[]");
       setNotif(Boolean(await storage.getItem(NOTIF_KEY, false)));
       try {
         setLogs(JSON.parse(String(rawLogs)));
         setDone(JSON.parse(String(rawDone)));
+        setSurveys(JSON.parse(String(rawSurveys)));
       } catch {
         // corrupted local data: start fresh
       }
@@ -93,6 +102,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const saveSurvey = useCallback(async (sv: Omit<Survey, "id" | "date">) => {
+    const entry: Survey = { ...sv, id: `sv-${Date.now()}`, date: dateKey() };
+    setSurveys((prev) => {
+      const next = [entry, ...prev];
+      storage.setItem(SURVEYS_KEY, JSON.stringify(next));
+      return next;
+    });
+    return entry;
+  }, []);
+
+  const surveyDueIn = surveys.length ? SURVEY_INTERVAL_DAYS - daysBetween(surveys[0].date, dateKey()) : 0;
+
   const tasks = useMemo<TaskStatus[]>(() => {
     const today = dateKey();
     return TASKS.map((t) => {
@@ -103,11 +124,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   }, [done]);
 
   useEffect(() => {
-    if (ready) syncReminders(tasks, notifEnabled).catch(() => {});
-  }, [ready, tasks, notifEnabled]);
+    if (ready) syncReminders(tasks, notifEnabled, surveyDueIn).catch(() => {});
+  }, [ready, tasks, notifEnabled, surveyDueIn]);
 
   return (
-    <DataContext.Provider value={{ ready, logs, saveLog, deleteLog, tasks, markDone, notifEnabled, setNotifEnabled }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ ready, logs, saveLog, deleteLog, tasks, markDone, notifEnabled, setNotifEnabled, surveys, saveSurvey, surveyDueIn }}>{children}</DataContext.Provider>
   );
 }
 

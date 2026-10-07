@@ -45,7 +45,9 @@ export function ReminderCard() {
         <View style={{ flex: 1 }}>
           <Txt variant="h3">Rappel chaque matin</Txt>
           <Txt variant="caption" testID="reminder-status">
-            {active ? `Activé : notification à ${REMINDER_HOUR} h quand une tâche est à faire` : `Recevez une notification à ${REMINDER_HOUR} h pour ne rien oublier`}
+            {active
+              ? `Activé : entretien à ${REMINDER_HOUR} h, questionnaire de la semaine à ${REMINDER_HOUR + 1} h`
+              : `Recevez une notification à ${REMINDER_HOUR} h pour l'entretien et chaque semaine pour le questionnaire`}
           </Txt>
         </View>
       </View>

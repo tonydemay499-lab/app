@@ -10,6 +10,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { makeStyles, useTheme } from "@/src/theme";
 import { usesNativeTabs } from "@/src/navigation";
 import { Txt, Card, Button, IconBadge, Ionicons, space, radius, fonts } from "@/src/ui";
+import { SurveyCard } from "@/src/components/survey-card";
 import { useData, FEELINGS, Feeling, formatHours, dateKey, parseKey } from "@/src/store";
 
 export default function Suivi() {
@@ -44,6 +45,7 @@ export default function Suivi() {
         <ActivityIndicator size="large" color={colors.brandPrimary} style={{ marginTop: space.xxxl }} />
       ) : (
         <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.md, paddingBottom: bottomChrome + 110 }}>
+          <SurveyCard testID="suivi-survey-card" />
           {logs.length === 0 ? (
             <Card testID="suivi-empty" style={{ alignItems: "center", paddingVertical: space.xxl }}>
               <IconBadge name="calendar" size={80} />

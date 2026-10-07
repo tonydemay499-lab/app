@@ -24,6 +24,9 @@ Guides + entretien + rappels + FAQ + suivi quotidien + assistant IA (Claude Sonn
 - Photo d'accueil générée par IA (technicien + patient 30-50 ans, PPC sur la table)
 - Assistant Claude opérationnel (solde rechargé), réponses en texte brut
 
+- Questionnaire hebdomadaire de ressenti (6 questions + Epworth), données locales, rappel notification à 10 h
+- Bilan des 3 mois (/bilan) : utilisation, évolution du ressenti, Epworth, gênes, partage texte
+
 ## Backlog
 - P1 : demande de consommables (bulle, filtres) envoyée à Médical o2
 - P2 : export PDF du suivi pour le médecin, vidéos tutoriels

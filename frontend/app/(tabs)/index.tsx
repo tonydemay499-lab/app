@@ -13,6 +13,7 @@ import { usesNativeTabs } from "@/src/navigation";
 import { Txt, Card, Button, ListRow, IconBadge, Ionicons, space, radius, fonts } from "@/src/ui";
 import { HERO_IMAGE, CONTACT_PHONE, CONTACT_TEL } from "@/src/content";
 import { useData, FEELINGS, formatHours, dateKey } from "@/src/store";
+import { SurveyCard } from "@/src/components/survey-card";
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -20,7 +21,7 @@ export default function Home() {
   const router = useRouter();
   const styles = useStyles();
   const { colors } = useTheme();
-  const { ready, logs, tasks, markDone } = useData();
+  const { ready, logs, tasks, markDone, surveyDueIn } = useData();
 
   const last = logs[0];
   const week = logs.filter((l) => (Date.now() - new Date(l.date).getTime()) / 86400000 <= 7);
@@ -75,6 +76,12 @@ export default function Home() {
             <Button testID="home-call-button" title={`Appeler le ${CONTACT_PHONE}`} icon="call" onPress={() => Linking.openURL(CONTACT_TEL)} />
           </Card>
         </Animated.View>
+
+        {surveyDueIn <= 0 ? (
+          <Animated.View entering={FadeInDown.delay(75).duration(400)}>
+            <SurveyCard testID="home-survey-card" />
+          </Animated.View>
+        ) : null}
 
         <Animated.View entering={FadeInDown.delay(100).duration(400)}>
           <Card testID="home-night-card">

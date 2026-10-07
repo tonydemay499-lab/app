@@ -1,0 +1,29 @@
+{
+  "summary": "Frontend-only testing of the weekly questionnaire + 3-month bilan features for Médical o2 Provence Expo app. All critical flows pass: Suivi 'Mon ressenti' card shows 'Questionnaire de la semaine à remplir' and start button opens /questionnaire; Home shows home-survey-card when due and hides it after completion; intro -> 14 questions one-per-screen with auto-advance (~200ms) and 'Question X sur 14' progress; option-0-everywhere yields wellbeing 100 % and Epworth 0/24 (gene opt 0 'Aucune gêne' excludes issue, no problems button); option-3-everywhere yields wellbeing 7 % and Epworth 24/24 'Somnolence importante' (ronflement 'Je dors seul(e)' correctly excluded) and 'Voir les solutions' opens /guide/problemes; after completion Suivi card updates to 'Prochain questionnaire dans 7 jours' and persists after reload (localStorage); /bilan screen shows bilan-nights, bilan-avg, bilan-ok, bilan-wellbeing, bilan-epworth, bilan-chart, bilan-next-date, bilan-share-button; empty bilan state shows bilan-start-survey-button; regression Home, Guides, Entretien (reminder-card present with web info), Chat all load fine. Only non-blocking console warnings: expo-notifications web warning and 'shadow*' style props deprecation warning. No deprecated expo-av/barcode-scanner packages detected.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "global", "issues": ["Console warning: 'shadow*' style props are deprecated. Use 'boxShadow'. Likely in Card component (ui.tsx) with shadowColor/shadowOpacity/shadowRadius/shadowOffset — update to boxShadow for RN Web compatibility."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(Optional) Migrate shadow* style props in Card (src/ui.tsx) to boxShadow to silence RN Web deprecation warnings."
+  ],
+  "critical_code_review_comments": [
+    "src/questionnaire.ts computeScores correctly handles null score (ronflement 'Je dors seul(e)') — verified by option-3 run (ronflement not contributing to max).",
+    "store.tsx surveyDueIn uses days since last survey; initial state (no surveys) returns 0 so due=true as expected.",
+    "survey-card.tsx start button is only rendered when due — correct hide after completion.",
+    "bilan.tsx Share.share is used; on web it may be unavailable — error swallowed via .catch, acceptable per request."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "No persistent seed; tests cleared localStorage before each run.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Header back button in /questionnaire has testID='header-back-button' (BackHeader component in src/ui.tsx). Auto-advance delay is ~200ms, use wait_for_timeout(350-400ms). Direct navigation to /questionnaire works via EXPO_BACKEND_URL. For bilan empty state: visit /bilan without surveys/logs. Localstorage keys: mo2_surveys, mo2_logs, mo2_task_done, mo2_notif_enabled.",
+  "rca_of_issue": "N/A"
+}
