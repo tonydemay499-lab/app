@@ -1,0 +1,152 @@
+{
+  "app_name": "Médical o2",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "Un accompagnement médical rassurant, très lisible et structuré, pensé spécifiquement pour le confort visuel et cognitif des seniors.",
+  "color": {
+    "surface": "#FCFBF9",
+    "onSurface": "#1C1C1E",
+    "surfaceSecondary": "#FFFFFF",
+    "onSurfaceSecondary": "#1C1C1E",
+    "surfaceTertiary": "#F0F4F2",
+    "onSurfaceTertiary": "#1B4332",
+    "surfaceInverse": "#2C3631",
+    "onSurfaceInverse": "#FCFBF9",
+    "brand": "#2D6A4F",
+    "brandPrimary": "#2D6A4F",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#40916C",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#D8F3DC",
+    "onBrandTertiary": "#1B4332",
+    "success": "#2D6A4F",
+    "onSuccess": "#FFFFFF",
+    "warning": "#B77B0E",
+    "onWarning": "#FFFFFF",
+    "error": "#B91C1C",
+    "onError": "#FFFFFF",
+    "info": "#404040",
+    "onInfo": "#FFFFFF",
+    "border": "#E5E5EA",
+    "borderStrong": "#C7C7CC",
+    "divider": "#E5E5EA",
+    "muted": "#636366",
+    "onBrand": "#FFFFFF"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous vertical breathing room. Avoid dense clustering to reduce cognitive load for seniors.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "pill": 999
+  },
+  "shadow_tier": "1",
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": "false",
+    "do's": [],
+    "dont's": [
+      "Avoid glassmorphism completely. Seniors need solid, opaque surfaces with high contrast to distinguish elements clearly."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "solid surfaceSecondary",
+      "android": "solid surfaceSecondary",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Accueil",
+      "purpose": "A reassuring daily summary showing therapy compliance, next maintenance task, and a friendly welcome.",
+      "states": {
+        "loading": "Centered large spinner with text 'Chargement des données...'",
+        "empty": "No tracking data yet. Show a soft illustration and a 'Commencer mon suivi' button.",
+        "error": "Failed to load dashboard. 'Impossible de charger les données.' with a large 'Réessayer' button."
+      },
+      "layout": "Header with 'Médical o2' logo/text. A hero card with a warm medical image (scrimmed) and reassuring text. Below: a large, high-contrast 'Statut de thérapie' card (e.g., hours slept), followed by a 'Rappel d'entretien' checklist item. Single column, md padding."
+    },
+    {
+      "name": "Guides",
+      "purpose": "A structured library of large, easily tappable cards for machine usage, mask fitting, and maintenance tutorials.",
+      "states": {
+        "loading": "Skeleton cards.",
+        "empty": "No guides available.",
+        "error": "Error loading guides. Retry button."
+      },
+      "layout": "Two sections: 'Utilisation' (PPC, Masques) and 'Entretien' (Quotidien, Hebdomadaire). Use a single-column list of large cards with a leading icon in a brandTertiary tinted container, title, and a clear chevron icon. Do not use 2-col grids; keep it 1-col for readability."
+    },
+    {
+      "name": "Suivi",
+      "purpose": "A simple, highly legible log of daily CPAP usage hours and patient feeling (ressenti), without overwhelming raw data charts.",
+      "states": {
+        "loading": "Spinner.",
+        "empty": "Illustration of a calendar. 'Vous n'avez pas encore entré de suivi.' + 'Ajouter la nuit dernière' primary CTA.",
+        "error": "Error loading history. Retry button."
+      },
+      "layout": "Sticky primary CTA at the bottom to 'Ajouter ma nuit'. Above it, a vertical scrollable history list. Each row displays the date (large), hours used, and an emoji/icon for the feeling (Bien, Moyen, Fatigué). Avoid complex charts; use simple progress bars or text logs."
+    },
+    {
+      "name": "Assistant",
+      "purpose": "An AI-powered conversational interface (Claude) to answer immediate patient questions about their equipment.",
+      "states": {
+        "loading": "Connecting to assistant...",
+        "empty": "Welcome message from the Assistant: 'Bonjour, je suis l'assistant Médical o2. Comment puis-je vous aider avec votre PPC aujourd'hui ?' with predefined question chips.",
+        "error": "Connection error. Retry."
+      },
+      "layout": "Standard chat interface but with significantly larger text bubbles. Input field sticky at the bottom with a prominent 'Envoyer' button. Use brandTertiary for user bubbles and surfaceSecondary for assistant bubbles."
+    }
+  ],
+  "images": {
+    "hero_accueil": {
+      "url": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NjV8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjB0YWxraW5nJTIwdG8lMjBzZW5pb3IlMjBwYXRpZW50fGVufDB8fHx8MTc5MTM0ODU1Mnww&ixlib=rb-4.1.0&q=85",
+      "alt": "A smiling doctor talking to a senior patient"
+    },
+    "cpap_mask": {
+      "url": "https://images.unsplash.com/photo-1712232413815-faf411f16011?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MDV8MHwxfHNlYXJjaHwyfHxveHlnZW4lMjBtYXNrJTIwYnJlYXRoaW5nJTIwbWVkaWNhbHxlbnwwfHx8fDE3OTEzNDg1MzV8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "A man wearing a breathing mask"
+    }
+  },
+  "haptics": {
+    "button_press": "selection",
+    "tab_change": "selection",
+    "task_completed": "notificationSuccess",
+    "error_occurred": "notificationError"
+  },
+  "instructions_to_main_agent": [
+    "SENIOR ACCESSIBILITY IS THE PRIORITY: Override default typography choices by using `lg` (16px) as the default body text size and `xl` or `2xl` for headers. Never use text smaller than 14px (`base`).",
+    "MINIMUM TOUCH TARGETS: Ensure all buttons, list rows, and interactive elements have a minimum height of 56px (taller than standard 48px).",
+    "NO GLASSMORPHISM: Seniors often struggle with low-contrast blurs. Use solid `surfaceSecondary` with a subtle 1pt border (`border`) for card separation instead.",
+    "COLOR BAN ENFORCEMENT: Absolutely NO blue, navy, indigo, or purple. The entire app relies on a calming, medical Sage/Forest Green (`brandPrimary`: #2D6A4F) paired with warm bone-white surfaces to reduce eye strain.",
+    "IMAGE SCRIM MANDATORY: If overlaying text on the `hero_accueil` image, you MUST use a gradient scrim (transparent to #2C3631) that reaches at least 70% opacity at the bottom. Use `onSurfaceInverse` for the text.",
+    "LAYOUT SIMPLICITY: Keep all lists (Guides, Suivi) strictly single-column. Do not use 2-col wrap layouts. Horizontal scanning is harder for this demographic.",
+    "Avoid medical jargon. Use clear, plain French (e.g., 'Ajouter ma nuit' instead of 'Soumettre données').",
+    "Keep navigation to the 4 bottom tabs. Do not bury features in deep submenus."
+  ]
+}

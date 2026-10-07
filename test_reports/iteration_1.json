@@ -1,0 +1,41 @@
+{
+  "summary": "First test pass of the Médical o2 Expo app (frontend + backend). Backend: created /app/backend/tests/test_api.py with 7 tests (health, chat validation, SSE stream, history persistence, clear, empty history). All 7 pass after one fix. Frontend: exercised the full flow on mobile viewport 390x844 - 4 tabs, add-night sheet (hours stepper, day/feeling selectors, save, same-date overwrite, delete, persistence after reload), guides list (8 items, PPC detail with 5 steps, back nav), entretien screen (6 tasks, mark done re-sorts to end), FAQ (toggle open/close), assistant suggestion auto-sends and chat displays the expected 'Assistant indisponible pour le moment.' error gracefully with no crash, user message persisted via /api/chat/{sid}/messages, and chat-clear-button wipes history. Known LLM budget 0.0 is handled correctly end-to-end. One real backend bug was found and fixed: MongoDB '_id' was leaking into GET /api/chat/{session_id}/messages because FastAPI defaults response_model_by_alias=True; frontend expected 'id'. Fixed by adding response_model_by_alias=False on that route.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "suivi (add-night-sheet)", "issues": ["The sheet is tall (maxHeight 92%); day/feeling/save controls sit below the fold on 390x844 and require scrolling inside the ScrollView. Content remains reachable, but on first open only 'Quelle nuit' row is visible above the fold - consider slightly compacting field spacing or starting sheet scroll closer to the top so the Save button is reachable without scrolling."]}
+    ],
+    "react_native_issues": [
+      {"component": "shadow* style props", "issue": "Console warning: '\"shadow*\" style props are deprecated. Use \"boxShadow\".' React Native Web deprecation notice - verify no shadowColor/shadowOpacity/shadowRadius/shadowOffset usage in StyleSheet; replace with boxShadow for web or use elevation + platform split."}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Optional: audit StyleSheet.create for shadow* props and migrate to boxShadow / platform-specific styles to silence the React Native Web deprecation warning.",
+    "Optional UX: reduce vertical padding inside add-night-sheet (fieldLabel marginTop space.xl + stepper height) so the Save button is visible without inner scroll on 390x844.",
+    "No functional fix needed for the chat flow - the budget-exhausted path is handled correctly (error bubble shown, user message persisted, done event closes the stream, no crash)."
+  ],
+  "critical_code_review_comments": [
+    "server.py get_messages leaked Mongo '_id' because FastAPI defaults response_model_by_alias=True while BaseDocument aliases id -> _id. Fixed with response_model_by_alias=False. Consider setting this globally or using model_dump(by_alias=False) if more routes return BaseDocument subclasses.",
+    "chat.tsx line 97: res.json() is called without checking res.ok. If the history endpoint errors, this will throw before the catch resets state - the current try/catch handles it but a 404/500 shape would still parse as JSON garbage. Fine for now.",
+    "store.tsx: deleteLog/markDone call storage.setItem inside the setState updater - works but is a side effect inside a reducer; acceptable here but noted."
+  ],
+  "updated_files": [
+    "/app/backend/server.py (added response_model_by_alias=False on GET /api/chat/{session_id}/messages)",
+    "/app/backend/tests/test_api.py (new)"
+  ],
+  "success_rate": {"backend": "100% (7/7)", "frontend": "100% of exercised flows (home, suivi CRUD + persistence + overwrite, guides nav + detail, entretien mark-done, FAQ toggle, assistant suggestion->chat auto-send, chat error handling, chat history persistence, chat clear)"},
+  "seed_data_creation": "No seed data. Tests use unique session_ids (uuid) and clean up via DELETE /api/chat/{sid}.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend tests live at /app/backend/tests/test_api.py (pytest). The frontend add-night-sheet is tall - use scrollIntoView on inner selectors before clicking day/feeling/save. The chat auto-send flow via /chat?q=... works; expect SSE events {error:'Assistant indisponible pour le moment.'} + {done:true} while the Emergent LLM key budget is 0. User message is still persisted and visible in GET /api/chat/{sid}/messages on reload. Local AsyncStorage persistence works per browser session.",
+  "rca_of_issue": "Bug: GET /api/chat/{session_id}/messages returned MongoDB '_id' instead of 'id'. Root cause: FastAPI's default is response_model_by_alias=True, which honored BaseDocument's alias='_id' on the id field. ChatMessage.from_mongo(doc) correctly validated '_id' -> id, but on response serialization FastAPI re-serialized using the alias, re-introducing '_id'. The frontend chat.tsx expects d.id (line 97) so every history message was being keyed with undefined, which would collide across messages and could corrupt FlatList rendering. Mitigation applied: added response_model_by_alias=False to the route. All 7 backend tests now pass and the mongo _id leak is gone."
+}
