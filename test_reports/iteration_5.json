@@ -1,0 +1,22 @@
+{
+  "summary": "Verified Android package rename in /app/frontend/app.json. expo.android.package is now 'com.medicalo.ppcpatientguide' (valid Java package: 2 lowercase segments, each starting with a letter, no dashes/underscores). app.json is valid JSON. No native /app/frontend/android directory exists that could override applicationId. The only remaining reference to the old 'com.emergent.ppcpatientguide.*' string is the iOS bundleIdentifier ('com.emergent.ppcpatientguide.m5lok0'), which is iOS-only and does not affect the Android/Google Play Console package. Smoke test on web preview: home-screen testID is visible, UI renders correctly (Médical o2 Provence header, bottom tab bar Accueil/Guides/Suivi/Assistant). No console errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Note (informational, not a bug): iOS bundleIdentifier remains 'com.emergent.ppcpatientguide.m5lok0'. User's request only concerned the Android package for Google Play Console, so no change needed unless App Store Connect also requires renaming."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Android package rename verified in iteration 5. app.json android.package = 'com.medicalo.ppcpatientguide'. No native android/ folder exists. iOS bundleIdentifier unchanged by design.",
+  "rca_of_issue": "User reported mismatched Android package on Google Play Console. Root cause: previous Android package was 'com.emergent.ppcpatientguide.m5lok0' which did not match the user's Play Console entry. Fix applied by main agent: updated expo.android.package in /app/frontend/app.json to 'com.medicalo.ppcpatientguide'. Verified it is a valid Java package name (lowercase, >=2 segments, each starts with a letter, no dashes)."
+}
