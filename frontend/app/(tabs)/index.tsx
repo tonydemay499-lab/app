@@ -3,7 +3,6 @@ import { ScrollView, View, ActivityIndicator, Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -46,7 +45,7 @@ export default function Home() {
           <Ionicons name="leaf" size={22} color={colors.onBrandPrimary} />
         </View>
         <View style={{ flex: 1 }}>
-          <Txt style={styles.brandName}>Médical o2</Txt>
+          <Txt style={styles.brandName}>Médical o2 Provence</Txt>
           <Txt variant="caption" style={{ textTransform: "capitalize" }}>
             {format(new Date(), "EEEE d MMMM", { locale: fr })}
           </Txt>
@@ -54,12 +53,11 @@ export default function Home() {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.lg, paddingBottom: bottomChrome + space.xl }}>
-        <Animated.View entering={FadeInDown.duration(400)} style={styles.hero}>
-          <Image source={HERO_IMAGE} style={{ position: "absolute", width: "100%", height: "100%" }} contentFit="cover" transition={300} />
-          <LinearGradient colors={["transparent", "rgba(44,54,49,0.85)"]} locations={[0.15, 0.85]} style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }} />
-          <View style={{ padding: space.xl }}>
-            <Txt variant="h2" style={{ color: colors.onSurfaceInverse }}>Bonjour,</Txt>
-            <Txt variant="body" style={{ color: colors.onSurfaceInverse }}>
+        <Animated.View entering={FadeInDown.duration(400)} style={styles.hero} testID="home-hero">
+          <Image source={HERO_IMAGE} style={styles.heroImage} contentFit="cover" contentPosition={{ top: "60%", left: "50%" }} transition={300} />
+          <View style={{ padding: space.lg + 4 }}>
+            <Txt variant="h2">Bonjour,</Txt>
+            <Txt variant="body" style={{ color: colors.onSurfaceSecondary }}>
               Nous vous accompagnons chaque jour avec votre PPC ou ventilation.
             </Txt>
           </View>
@@ -174,7 +172,8 @@ const useStyles = makeStyles((c) => ({
   },
   logo: { width: 44, height: 44, borderRadius: 14, backgroundColor: c.brandPrimary, alignItems: "center", justifyContent: "center" },
   brandName: { fontFamily: fonts.extrabold, fontSize: 22, color: c.brandPrimary },
-  hero: { height: 210, borderRadius: radius.lg, overflow: "hidden", justifyContent: "flex-end", backgroundColor: c.surfaceInverse },
+  hero: { borderRadius: radius.lg, overflow: "hidden", backgroundColor: c.surfaceSecondary, borderWidth: 1, borderColor: c.border },
+  heroImage: { width: "100%", aspectRatio: 3 / 2, backgroundColor: c.surfaceTertiary },
   cardHead: { flexDirection: "row", alignItems: "center", gap: space.md, marginBottom: space.lg },
   statRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: space.md },
   bigStat: { fontFamily: fonts.extrabold, fontSize: 40, lineHeight: 48, color: c.onSurface },

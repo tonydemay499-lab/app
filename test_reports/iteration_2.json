@@ -1,0 +1,32 @@
+{
+  "summary": "Iteration 2 frontend-only regression + new features. Verified at mobile viewport 390x844 on the public EXPO_BACKEND_URL. New: (1) Home header shows 'Médical o2 Provence' and date; hero image hero-ppc.jpg is served (HTTP 200, 87820 B) and displayed under the gradient. (2) home-contact-card renders with home-call-button text 'Appeler le 04 28 41 01 10' (tel:0428410110). (3) /entretien renders reminder-card at the top; on web it correctly falls back to 'Rappels sur le téléphone — Disponibles dans l'application installée sur votre téléphone.' with no crash. (4) task-coussin title is 'Nettoyer la bulle (membrane) du masque'; all 6 tasks visible (coussin, cuve, masque-complet, tuyau, detartrage, filtre); task-done-coussin marks the task done, status flips to 'Dans 1 jour' and the row re-sorts. (5) /guide/ppc loads ppc-chevet.jpg (1280x960, natural dimensions OK) and shows the 5 steps including 'Installer l'appareil' and 'Brancher le tuyau'. Regressions: tabs (Accueil/Guides/Suivi/Assistant), /suivi?add=1, /chat and /faq all load without pageerror. Code review of notifications.ts / reminder-card.tsx / store.tsx / _layout.tsx: logic is sound for native (see critical_code_review_comments). No new bugs found. Pre-existing React Native Web warning 'shadow* style props are deprecated' still present (reported in iteration 1).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "shadow* style props", "issue": "Still present (carry-over from iteration 1). Console warning: '\"shadow*\" style props are deprecated. Use \"boxShadow\".' on web. Not a blocker but should be migrated for RN Web parity."}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Optional: migrate StyleSheet shadow* props to boxShadow for web / elevation for Android (recurring warning).",
+    "Optional: in notifications.ts syncReminders, 'tasks' is a sorted-by-dueIn array which changes identity whenever any 'done' timestamp changes. Each syncReminders call cancels and re-schedules up to 14 notifications. This is fine but could be throttled or diffed if the reschedule cost on-device becomes noticeable.",
+    "No functional change required: feature set from the review request is fully implemented and visible on web."
+  ],
+  "critical_code_review_comments": [
+    "notifications.ts: syncReminders iterates d=0..13 and filters tasks with dueIn <= d. Logic is correct: a task with dueIn=0 fires today (if 9h hasn't passed), dueIn=1 fires tomorrow, etc. 'when <= now' guard correctly skips past-9h for today. SchedulableTriggerInputTypes.DATE is the right API in expo-notifications v0.3x. channelId correctly scoped to Android inside the trigger. OK.",
+    "reminder-card.tsx: AppState listener correctly refreshes permission on resume; cleaned up via sub.remove(). Early return for !notificationsSupported ensures no permission call on web. OK.",
+    "store.tsx: syncReminders effect depends on [ready, tasks, notifEnabled]. tasks is a useMemo keyed on 'done', so it won't thrash on unrelated re-renders. .catch(() => {}) swallows errors silently — acceptable because notifications are best-effort. OK.",
+    "_layout.tsx: useNotificationTap registers Notifications.addNotificationResponseReceivedListener and routes to data.url. router is referenced in deps — useRouter in expo-router returns a stable object but React may still re-run; the sub.remove() cleanup handles it. OK.",
+    "Minor: notificationsSupported is Platform.OS !== 'web' — the module-level call to Notifications.setNotificationHandler is gated by this flag, which is correct and prevents the handler from being installed in the web bundle."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (frontend-only run)", "frontend": "100% of requested checks (home header + hero + contact card + call button, entretien reminder-card web fallback + 6 tasks + mark-done, guide/ppc image + steps, regressions suivi/faq/chat)"},
+  "seed_data_creation": "None.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Native reminder scheduling cannot be verified on web — expo-notifications emits 'Listening to push token changes is not yet fully supported on web' and notificationsSupported is false, so syncReminders returns early. To validate on-device, run a dev build on Android/iOS, grant notifications, and inspect Notifications.getAllScheduledNotificationsAsync(). The reminder-card web branch is covered via testID 'reminder-card' showing the fallback copy. Hero image URL served at /assets/?unstable_path=.%2Fassets%2Fimages/hero-ppc.jpg (200, image/jpeg). ppc-chevet.jpg similarly served and rendered at natural 1280x960.",
+  "rca_of_issue": "No new bug. The HOME <img> naturalWidth briefly returned 0 in page.evaluate because expo-image lazy-decodes; the file itself is 87820 B / HTTP 200 and visible in the rendered screenshot. Not a defect."
+}

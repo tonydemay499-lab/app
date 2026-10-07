@@ -1,5 +1,8 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import { notificationsSupported } from "@/src/notifications";
 import { LogBox, View, ActivityIndicator } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useFonts } from "expo-font";
@@ -14,8 +17,21 @@ import { useTheme } from "@/src/theme";
 // and agent works as expected.
 LogBox.ignoreAllLogs(true)
 
+function useNotificationTap() {
+  const router = useRouter();
+  useEffect(() => {
+    if (!notificationsSupported) return;
+    const sub = Notifications.addNotificationResponseReceivedListener((r) => {
+      const url = r.notification.request.content.data?.url;
+      if (typeof url === "string") router.push(url as never);
+    });
+    return () => sub.remove();
+  }, [router]);
+}
+
 export default function RootLayout() {
   const { colors } = useTheme();
+  useNotificationTap();
   const [loaded, error] = useFonts({
     "PJ-Regular": require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
     "PJ-SemiBold": require("../assets/fonts/PlusJakartaSans-SemiBold.ttf"),

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Médical o2",
+    "name": "Médical o2 Provence",
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,7 +16,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#2D6A4F"
       },
-      "package": "com.emergent.ppcpatientguide.m5lok0"
+      "package": "com.emergent.ppcpatientguide.m5lok0",
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -39,7 +42,13 @@
       "expo-secure-store",
       "expo-web-browser",
       "expo-status-bar",
-      "@react-native-vector-icons/ionicons"
+      "@react-native-vector-icons/ionicons",
+      [
+        "expo-notifications",
+        {
+          "color": "#2D6A4F"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,12 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { storage } from "@/src/utils/storage";
 import { TASKS, MaintenanceTask } from "@/src/content";
+import { syncReminders } from "@/src/notifications";
 
 export type Feeling = "bien" | "moyen" | "fatigue";
 export type NightLog = { id: string; date: string; hours: number; feeling: Feeling };
 
 const LOGS_KEY = "mo2_logs";
 const DONE_KEY = "mo2_task_done";
+const NOTIF_KEY = "mo2_notif_enabled";
 
 export function dateKey(d: Date = new Date()) {
   const y = d.getFullYear();
@@ -33,6 +35,8 @@ type Ctx = {
   deleteLog: (id: string) => Promise<void>;
   tasks: TaskStatus[];
   markDone: (taskId: string) => Promise<void>;
+  notifEnabled: boolean;
+  setNotifEnabled: (v: boolean) => Promise<void>;
 };
 
 const DataContext = createContext<Ctx | null>(null);
@@ -41,11 +45,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [logs, setLogs] = useState<NightLog[]>([]);
   const [done, setDone] = useState<Record<string, string>>({});
+  const [notifEnabled, setNotif] = useState(false);
+
+  const setNotifEnabled = useCallback(async (v: boolean) => {
+    setNotif(v);
+    await storage.setItem(NOTIF_KEY, v);
+  }, []);
 
   useEffect(() => {
     (async () => {
       const rawLogs = await storage.getItem(LOGS_KEY, "[]");
       const rawDone = await storage.getItem(DONE_KEY, "{}");
+      setNotif(Boolean(await storage.getItem(NOTIF_KEY, false)));
       try {
         setLogs(JSON.parse(String(rawLogs)));
         setDone(JSON.parse(String(rawDone)));
@@ -91,8 +102,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }).sort((a, b) => a.dueIn - b.dueIn);
   }, [done]);
 
+  useEffect(() => {
+    if (ready) syncReminders(tasks, notifEnabled).catch(() => {});
+  }, [ready, tasks, notifEnabled]);
+
   return (
-    <DataContext.Provider value={{ ready, logs, saveLog, deleteLog, tasks, markDone }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ ready, logs, saveLog, deleteLog, tasks, markDone, notifEnabled, setNotifEnabled }}>{children}</DataContext.Provider>
   );
 }
 

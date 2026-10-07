@@ -33,7 +33,7 @@ export default function GuideDetail() {
       <BackHeader title={guide.title} onBack={back} topInset={insets.top} />
       <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.lg, paddingBottom: insets.bottom + space.xl }}>
         {guide.id === "masque" || guide.id === "ppc" ? (
-          <Image source={{ uri: MASK_IMAGE }} style={styles.image} contentFit="cover" transition={300} />
+          <Image source={MASK_IMAGE} style={styles.image} contentFit="cover" transition={300} />
         ) : null}
         <Txt variant="body" testID="guide-intro">{guide.intro}</Txt>
 

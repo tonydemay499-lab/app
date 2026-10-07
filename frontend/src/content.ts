@@ -190,5 +190,4 @@ export const HERO_IMAGE = require("../assets/images/hero-ppc.jpg");
 
 export const CONTACT_PHONE = "04 28 41 01 10";
 export const CONTACT_TEL = "tel:0428410110";
-export const MASK_IMAGE =
-  "https://images.unsplash.com/photo-1712232413815-faf411f16011?crop=entropy&cs=srgb&fm=jpg&q=80&w=1080";
+export const MASK_IMAGE = require("../assets/images/ppc-chevet.jpg");

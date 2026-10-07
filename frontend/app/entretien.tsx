@@ -7,6 +7,7 @@ import * as Haptics from "expo-haptics";
 import { makeStyles, useTheme } from "@/src/theme";
 import { Txt, BackHeader, IconBadge, Ionicons, space, radius } from "@/src/ui";
 import { useData } from "@/src/store";
+import { ReminderCard } from "@/src/components/reminder-card";
 
 const freqLabel = (d: number) => (d === 1 ? "Chaque jour" : d === 7 ? "Chaque semaine" : "Chaque mois");
 
@@ -22,6 +23,7 @@ export default function Entretien() {
     <View style={styles.root} testID="entretien-screen">
       <BackHeader title="Rappels d'entretien" onBack={back} topInset={insets.top} />
       <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.md, paddingBottom: insets.bottom + space.xl }}>
+        <ReminderCard />
         <Txt variant="body" style={{ color: colors.muted }}>
           Appuyez sur « Fait » quand la tâche est terminée. Le rappel reviendra au bon moment.
         </Txt>

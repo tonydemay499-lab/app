@@ -17,9 +17,13 @@ Guides + entretien + rappels + FAQ + suivi quotidien + assistant IA (Claude Sonn
 - « Coussin » remplacé par « bulle (membrane) » partout
 
 ## Points ouverts
-- Le budget de la clé LLM universelle est à 0 → l'assistant affiche « indisponible » tant qu'il n'est pas rechargé
+- Notifications locales à valider sur build natif (pas testables sur web)
+
+- Rappels d'entretien : notifications locales chaque matin à 9 h (expo-notifications), carte d'activation dans Entretien
+- Nom de l'app : « Médical o2 Provence »
+- Photo d'accueil générée par IA (technicien + patient 30-50 ans, PPC sur la table)
+- Assistant Claude opérationnel (solde rechargé), réponses en texte brut
 
 ## Backlog
-- P1 : notifications locales pour les rappels d'entretien
 - P1 : demande de consommables (bulle, filtres) envoyée à Médical o2
 - P2 : export PDF du suivi pour le médecin, vidéos tutoriels
